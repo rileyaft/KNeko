@@ -16,7 +16,6 @@
         "Website": "null"
     },
     "X-Plasma-API": "declarativescript",
-    "X-Plasma-MainScript": "code/main.qml",
     "X-KDE-ConfigModule": "config/main.xml",
     "KPackageStructure": "KWin/Script"
 }
