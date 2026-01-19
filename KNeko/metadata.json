@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Name": "KNeko",
+        "Description": "An Oneko implementation in kwinscript",
+        "Icon": "emote-love",
+
+        "Authors": [
+            {
+                "Email": "riley.aft@outlook.com",
+                "Name": "RileyAFT"
+            }
+        ],
+        "Id": "kneko",
+        "Version": "0.0.1",
+        "License": "GPLv3",
+        "Website": "null"
+    },
+    "X-Plasma-API": "declarativescript",
+    "X-Plasma-MainScript": "code/main.qml",
+    "X-KDE-ConfigModule": "config/main.xml",
+    "KPackageStructure": "KWin/Script"
+}

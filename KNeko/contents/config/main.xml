@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+    <group name="">
+        <entry name="FollowType" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="FollowRadius" type="int">
+            <default>16</default>
+        </entry>
+        <entry name="FollowWindowClass" type="string">
+            <default>org.kde.dolphin</default>
+        </entry>
+        <entry name="FollowOffsetX" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="FollowOffsetY" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="SpawnPosType" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="SpawnRelativePos" type="int">
+            <default>1</default>
+        </entry>
+        <entry name="SpawnPosX" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="SpawnPosY" type="int">
+            <default>0</default>
+        </entry>
+        <entry name="FollowSpeed" type="int">
+            <default>10</default>
+        </entry>
+        <entry name="IdleTimeout" type="int">
+            <default>15</default>
+        </entry>
+        <entry name="Appearance" type="int">
+            <default>0</default>
+        </entry>
+    </group>
+</kcfg>
