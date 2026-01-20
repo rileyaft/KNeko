@@ -27,7 +27,7 @@ Bolded features are those I need help implementing, if at all possible.
 - - [ ] Tracking across desktops (running from previous spot)
 - - [x] Pinned to one desktop
 - - - [ ] Make configurable
-- - [ ] Tracking across desktops (*All Desktops* pin)
+- - [ ] Tracking across desktops (*All Desktops*)
 - [ ] Differing behaviour across screens
 - [ ] **Smoothing similar to [geometry change desktop effect](https://github.com/peterfajdiga/kwin4_effect_geometry_change)**, for those who don't have it installed
 - [ ] Additional spritesets
