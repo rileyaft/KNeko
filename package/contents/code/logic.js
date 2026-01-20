@@ -103,6 +103,7 @@ let cat = {
         yawning: false,
         sleeping: false,
         scratching: false,
+        grooming: false,
         suprised: false,
         stuck: false,
     },
@@ -168,7 +169,6 @@ function init(root, cfg) {
 // Origin: Top left (0,0)
 // Down and right are positive
 function tick(root) {
-    // print("tick");
     cat.frame_count++;
 
     if (config.followType == followTypes["mouse"]) {
@@ -186,18 +186,11 @@ function tick(root) {
         cat.last_moved = Date.now();
         cat.state.moving = true;
 
-        // const step = Math.min(dist, root.followSpeed);
-        const step = Math.min(dist, 15);
+        const step = Math.min(dist, config.followSpeed);
         root.catX = root.catX + (dx / dist) * step;
         root.catY = root.catY + (dy / dist) * step;
 
-        // print("followSpeed, step: " + root.catX + " " + root.followSpeed + " " + step);
-
         setSpriteAnim(root, directionFinder(dx, dy));
-
-        // print("Cursor: (" + cursor.x + ", " + cursor.y + ")");
-        // print("Target: (" + cat.target_X + ", " + cat.target_Y + ")");
-        // print("Current Position: (" + root.catX + ", " + root.catY + ")");
     } else {
         // Non-moving animations
         if (cat.state.moving === true) {
