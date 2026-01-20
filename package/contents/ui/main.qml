@@ -18,14 +18,15 @@ PlasmaCore.Window {
 
     Item {
         // TODO: Add remaining config options and functionality
+        // FIXME: Some config seems to be 0?
         id: root
 
         // Config values
         readonly property int followType: KWin.readConfig("FollowType", 0)
         readonly property int followRadius: KWin.readConfig("FollowRadius", 16)
-        readonly property int followOffsetX: KWin.readConfig("FollowOffsetX", 0)
-        readonly property int followOffsetY: KWin.readConfig("FollowOffsetY", 0)
-        readonly property int followSpeed: KWin.readConfig("FollowSpeed", 10)
+        readonly property int followOffsetX: KWin.readConfig("FollowOffsetX", -32)
+        readonly property int followOffsetY: KWin.readConfig("FollowOffsetY", -32)
+        readonly property int followSpeed: KWin.readConfig("FollowSpeed", 15)
         readonly property int idleTimeout: KWin.readConfig("IdleTimeout", 15)
         readonly property int appearance: KWin.readConfig("Appearance", 0)
         // -
@@ -37,7 +38,12 @@ PlasmaCore.Window {
         property url spriteSource: "img/neko.png"
         property int catX: 128
         property int catY: 128
-        property bool init: Logic.init(root)
+
+        Component.onCompleted: {
+            print("Init");
+            print(followSpeed);
+            Logic.init(root);
+        }
 
         Image {
             id: sprite
@@ -53,17 +59,18 @@ PlasmaCore.Window {
 
         Connections {
             function onCursorPosChanged() {
-                Logic.setCursorPos(Kwin.Workspace.cursorPos.x, Kwin.Workspace.cursorPos.y);
+                Logic.setCursorPos(KWin.Workspace.cursorPos.x, KWin.Workspace.cursorPos.y);
             }
 
             target: KWin.Workspace
         }
 
         Timer {
-            interval: 16
+            interval: 150
             running: true
             repeat: true
             onTriggered: {
+                // print(win.x + " " + win.y);
                 Logic.tick(root);
             }
         }

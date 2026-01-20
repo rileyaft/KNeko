@@ -12,10 +12,10 @@
             <default>org.kde.dolphin</default>
         </entry>
         <entry name="FollowOffsetX" type="int">
-            <default>0</default>
+            <default>-32</default>
         </entry>
         <entry name="FollowOffsetY" type="int">
-            <default>0</default>
+            <default>-32</default>
         </entry>
         <entry name="SpawnPosType" type="int">
             <default>0</default>
@@ -30,13 +30,16 @@
             <default>0</default>
         </entry>
         <entry name="FollowSpeed" type="int">
-            <default>10</default>
+            <default>15</default>
         </entry>
         <entry name="IdleTimeout" type="int">
             <default>15</default>
         </entry>
         <entry name="Appearance" type="int">
             <default>0</default>
+        </entry>
+        <entry name="AnimationInterval" type="int">
+            <default>150</default>
         </entry>
     </group>
 </kcfg>

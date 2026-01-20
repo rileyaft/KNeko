@@ -1,5 +1,5 @@
 const followTypes = Object.freeze({
-    followsMouse: 0,
+    mouse: 0,
     // windowTitlebar: 1,
     // inWindow: 2,
     // onTaskbar: 3,
@@ -20,16 +20,22 @@ const spriteList = Object.freeze({
 
 const spriteInfo = (val) => {
     for (const key in spriteList) {
-        if (spriteList[key].value === val) return spriteList[key];
+        if (spriteList[key].id === val) return spriteList[key];
     }
     return spriteList.Neko;
 };
 
-export function init(root) {
+function init(root) {
+    print("Start init");
+
     const sprite = spriteInfo(root.appearance);
     root.spriteSource = sprite.path;
     root.tileW = sprite.tileWidth;
     root.tileH = sprite.tileHeight;
+
+    // FIXME: Move config from QML to JS
+
+    print("Init complete");
 
     return true;
 }
@@ -99,15 +105,16 @@ const spriteMap = Object.freeze({
     ],
 });
 
-function setSpriteAnim(root, anim, frame) {
-    root.tileX = spriteMap[anim][frame][0];
-    root.tileY = spriteMap[anim][frame][1];
+function setSpriteAnim(root, anim) {
+    const sprite = spriteMap[anim][cat.frame_count % spriteMap[anim].length];
+    root.tileX = sprite[0];
+    root.tileY = sprite[1];
 }
 
 // Origin: Top left (0,0)
 // Down and right are positive
 function directionFinder(dx, dy) {
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
 
     if (angle < -157 || angle >= 157) return "W";
     if (angle < -112) return "NW";
@@ -121,52 +128,71 @@ function directionFinder(dx, dy) {
 
 let cursor = {
     x: 0,
-    y: 0
+    y: 0,
+};
+function setCursorPos(curs_X, curs_Y) {
+    ((cursor.x = curs_X), (cursor.y = curs_Y));
 }
-export function setCursorPos(curs_X, curs_Y) { cursor.x = curs_X, cursor.y = curs_Y };
 
 function resetCatState() {
     for (const key in cat.state) {
-        state[key] = false;
+        cat.state[key] = false;
     }
-    cat.state.canReachTarget = true;
 }
 
 let cat = {
     target_X: 0,
     target_Y: 0,
-    x: 0,
-    y: 0,
     last_moved: Date.now(),
     state: {
         moving: false,
+        yawning: false,
         sleeping: false,
         scratching: false,
         suprised: false,
-        canReachTarget: true
-    }
+        stuck: false,
+    },
+    frame_count: 0,
 };
-
 
 // Origin: Top left (0,0)
 // Down and right are positive
-export function tick(root) {
+function tick(root) {
+    // print("tick");
+    cat.frame_count++;
 
-    if (root.followType === followTypes["mouse"]) {
-        cat.target_X = cursor.x;
-        cat.target_Y = cursor.y;
+    if (root.followType == followTypes["mouse"]) {
+        cat.target_X = cursor.x + root.followOffsetX;
+        cat.target_Y = cursor.y + root.followOffsetY;
     }
     const dx = cat.target_X - root.catX;
     const dy = cat.target_Y - root.catY;
 
     const dist = Math.hypot(dx, dy);
 
-    if (dist >= root.followRadius) {
+    if (dist >= root.followRadius && dist != 0) {
         // TODO: Implement all other cat states
         // Movement
         cat.last_moved = Date.now();
+        cat.state.moving = true;
 
+        // const step = Math.min(dist, root.followSpeed);
+        const step = Math.min(dist, 15);
+        root.catX = root.catX + (dx / dist) * step;
+        root.catY = root.catY + (dy / dist) * step;
+
+        // print("followSpeed, step: " + root.catX + " " + root.followSpeed + " " + step);
+
+        setSpriteAnim(root, directionFinder(dx, dy));
+
+        // print("Cursor: (" + cursor.x + ", " + cursor.y + ")");
+        // print("Target: (" + cat.target_X + ", " + cat.target_Y + ")");
+        // print("Current Position: (" + root.catX + ", " + root.catY + ")");
     } else {
-        // Idle animations
+        // Non-moving animations
+        if (cat.state.moving === true) {
+            setSpriteAnim(root, "idle");
+            cat.state.moving = false;
+        }
     }
-};
+}
