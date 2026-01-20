@@ -1,7 +1,7 @@
 import "../code/logic.js" as Logic
 import QtQuick
 import QtQuick.Window
-import org.kde.kwin as KWin
+import org.kde.kwin
 import org.kde.plasma.core as PlasmaCore
 
 PlasmaCore.Window {
@@ -9,7 +9,7 @@ PlasmaCore.Window {
 
     visible: true
     // FIXME: Make the window _actually_ transparent!
-    flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground | Qt.WindowStaysOnTopHint | Qt.NoDropShadowHint
+    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.NoDropShadowHint | Qt.WindowTransparentForInput
     color: "transparent"
     width: root.tileW
     height: root.tileH
@@ -17,18 +17,19 @@ PlasmaCore.Window {
     y: root.catY
 
     Item {
-        // TODO: Add remaining config options and functionality
-        // FIXME: Some config seems to be 0?
+        // TODO: Add remaining functionality
         id: root
 
-        // Config values
-        readonly property int followType: KWin.readConfig("FollowType", 0)
-        readonly property int followRadius: KWin.readConfig("FollowRadius", 16)
-        readonly property int followOffsetX: KWin.readConfig("FollowOffsetX", -32)
-        readonly property int followOffsetY: KWin.readConfig("FollowOffsetY", -32)
-        readonly property int followSpeed: KWin.readConfig("FollowSpeed", 15)
-        readonly property int idleTimeout: KWin.readConfig("IdleTimeout", 15)
-        readonly property int appearance: KWin.readConfig("Appearance", 0)
+        property var cfg: ({
+            "followType": KWin.readConfig("FollowType", 0),
+            "followRadius": KWin.readConfig("FollowRadius", 16),
+            "followOffsetX": KWin.readConfig("FollowOffsetX", -32),
+            "followOffsetY": KWin.readConfig("FollowOffsetY", -32),
+            "followSpeed": KWin.readConfig("FollowSpeed", 15),
+            "idleTimeout": KWin.readConfig("IdleTimeout", 15),
+            "appearance": KWin.readConfig("Appearance", 0),
+            "timerSpeed": KWin.readConfig("AnimationInterval", 150)
+        })
         // -
         // Owned by Logic (will be overwritten)
         property int tileW: 32
@@ -41,8 +42,7 @@ PlasmaCore.Window {
 
         Component.onCompleted: {
             print("Init");
-            print(followSpeed);
-            Logic.init(root);
+            Logic.init(root, root.cfg);
         }
 
         Image {
@@ -66,7 +66,7 @@ PlasmaCore.Window {
         }
 
         Timer {
-            interval: 150
+            interval: root.cfg.timerSpeed
             running: true
             repeat: true
             onTriggered: {
