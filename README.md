@@ -13,6 +13,7 @@ A set of features I want in place, for fun
 Bolded features are those I need help implementing, if at all possible.
 
 ### Wishlist
+<<<<<<< HEAD
 - [ ] **Make window *fully* transparent!** 
 - [ ] **Allow clickthrough on window**
 - [ ] All remaining animation types part of the original X11 Oneko implementation
@@ -32,6 +33,27 @@ Bolded features are those I need help implementing, if at all possible.
 - [ ] **Smoothing similar to [geometry change desktop effect](https://github.com/peterfajdiga/kwin4_effect_geometry_change)**, for those who don't have it installed
 - [ ] Additional spritesets
 - [ ] Make Neko respond to being grabbed by user (*Meta + Click*)
+=======
+- [] **Make window *fully* transparent!** 
+- [] **Allow clickthrough on window**
+- [] All remaining animation types part of the original X11 Oneko implementation
+- [] Configuration UI (QTWidgets module)
+- [] Follow types
+- - [x] Mouse
+- - - [] Follow on keybind? on click?
+- - [] Window titlebar
+- - [] Across taskbar (if present, else bottom of screen)
+- - [] Stationary placement
+- [] Differing behaviour across virtual desktops
+- - [] Tracking across desktops (running from previous spot)
+- - [x] Pinned to one desktop
+- - - [] Make configurable
+- - [] Tracking across desktops (*All Desktops* pin)
+- [] Differing behaviour across screens
+- [] **Smoothing similar to [geometry change desktop effect](https://github.com/peterfajdiga/kwin4_effect_geometry_change)**, for those who don't have it installed
+- [] Additional spritesets
+- [] Make Neko respond to being grabbed by user (*Meta + Click*)
+>>>>>>> b02fd5c6bf33ca056c91dcd5e9a1616d02234942
 
 ### Not Planned
 These are features I don't plan on adding myself. If you'd like to see them added, send a pull request!
