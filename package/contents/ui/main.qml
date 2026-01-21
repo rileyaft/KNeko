@@ -10,13 +10,11 @@ import "../code/logic.js" as Logic
 import QtQuick
 import QtQuick.Window
 import org.kde.kwin
-import org.kde.plasma.core as PlasmaCore
 
-PlasmaCore.Window {
+Window {
     id: win
 
     visible: true
-    // FIXME: Make the window _actually_ transparent!
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.NoDropShadowHint | Qt.WindowTransparentForInput
     color: "transparent"
     width: root.tileW

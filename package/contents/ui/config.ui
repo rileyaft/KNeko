@@ -366,6 +366,16 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QLabel" name="labelNote">
+           <property name="text">
+            <string>Note: in order for settings to apply, you need to reload the script.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="pageBehavior">

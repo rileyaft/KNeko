@@ -13,7 +13,8 @@ A set of features I want in place, for fun
 Bolded features are those I need help implementing, if at all possible.
 
 ### Wishlist
-- [ ] **Make window *fully* transparent!** 
+- [x] **Make window *fully* transparent!** 
+> This was solved by using a regular Window QQC2 object, not PlasmaCore.Window, which carries plasma's window theming.
 - [ ] **Allow clickthrough on window**
 - [ ] **Hot configuration reloading**
 - [ ] All remaining animation types part of the original X11 Oneko implementation
@@ -45,3 +46,4 @@ These are features I don't plan on adding myself. If you'd like to see them adde
 - **[Oneko.js](https://github.com/adryd325/oneko.js)** - Code for the sprite map, and inspiration on how to handle sending frames to QML
 - **[Onekocord](https://github.com/MCHAMSTERYT2/onekocord/tree/main/onekoskins)** - For the collection of skins
 - **[KWin Effect Geometry Change](https://github.com/peterfajdiga/kwin4_effect_geometry_change)** - Makefile
+- **[KhrohnKite](https://codeberg.org/anametologin/Krohnkite)** - Pulling KWin API from QML to JS. Lifesaver!
