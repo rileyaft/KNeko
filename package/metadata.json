@@ -11,9 +11,9 @@
             }
         ],
         "Id": "kneko",
-        "Version": "0.0.2",
+        "Version": "0.0.3",
         "License": "GPLv3",
-        "Website": "null"
+        "Website": "https://github.com/rileyaft/KNeko"
     },
     "X-Plasma-API": "declarativescript",
     "X-KDE-ConfigModule": "kwin/effects/configs/kcm_kwin4_genericscripted",

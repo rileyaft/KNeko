@@ -100,6 +100,14 @@
        <iconset theme="preferences-desktop-theme"/>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>About</string>
+      </property>
+      <property name="icon">
+       <iconset theme="user_icon"/>
+      </property>
+     </item>
     </widget>
    </item>
    <item>
@@ -116,7 +124,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="pageGeneral">
         <layout class="QVBoxLayout" name="generalLayout">
@@ -208,6 +216,9 @@
             </item>
             <item row="3" column="1">
              <widget class="QSpinBox" name="kcfg_FollowRadius">
+              <property name="cursor">
+               <cursorShape>SizeVerCursor</cursorShape>
+              </property>
               <property name="toolTip">
                <string>How far the target has to move before KNeko begins following again</string>
               </property>
@@ -234,6 +245,9 @@
             </item>
             <item row="4" column="1">
              <widget class="QSpinBox" name="kcfg_FollowSpeed">
+              <property name="cursor">
+               <cursorShape>SizeVerCursor</cursorShape>
+              </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The maximum distance KNeko will &amp;quot;jump&amp;quot; towards its target.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -257,6 +271,9 @@
             </item>
             <item row="5" column="1">
              <widget class="QSpinBox" name="kcfg_IdleTimeout">
+              <property name="cursor">
+               <cursorShape>SizeVerCursor</cursorShape>
+              </property>
               <property name="minimum">
                <number>0</number>
               </property>
@@ -301,6 +318,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -313,6 +333,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
@@ -372,6 +395,9 @@
             </item>
             <item row="2" column="1">
              <widget class="QSpinBox" name="kcfg_AnimationInterval">
+              <property name="cursor">
+               <cursorShape>SizeVerCursor</cursorShape>
+              </property>
               <property name="minimum">
                <number>50</number>
               </property>
@@ -390,6 +416,9 @@
              <layout class="QFormLayout" name="formLayout">
               <item row="0" column="0">
                <widget class="QSpinBox" name="kcfg_FollowOffsetX">
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
+                </property>
                 <property name="toolTip">
                  <string>x (px)</string>
                 </property>
@@ -406,6 +435,9 @@
               </item>
               <item row="0" column="1">
                <widget class="QSpinBox" name="kcfg_FollowOffsetY">
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
+                </property>
                 <property name="toolTip">
                  <string>y (px)</string>
                 </property>
@@ -533,15 +565,168 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="pageAbout">
+        <property name="cursor">
+         <cursorShape>WhatsThisCursor</cursorShape>
+        </property>
+        <layout class="QVBoxLayout" name="aboutLayout">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="groupAbout">
+           <property name="title">
+            <string>About</string>
+           </property>
+           <layout class="QFormLayout" name="aboutForm">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
+            </property>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="kcfg_EasterEgg">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="cursor">
+               <cursorShape>ForbiddenCursor</cursorShape>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::FocusPolicy::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset theme="emote-love"/>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <property name="default">
+               <bool>false</bool>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QVBoxLayout" name="verticalLayoutAbout">
+              <item>
+               <widget class="QLabel" name="labelAboutTitle">
+                <property name="font">
+                 <font>
+                  <pointsize>16</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>KNeko</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="labelAbout">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>An Onkeo implementation in kwinscript</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="1">
+             <widget class="Line" name="line_2">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Shadow::Plain</enum>
+              </property>
+              <property name="lineWidth">
+               <number>4</number>
+              </property>
+              <property name="midLineWidth">
+               <number>4</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to see more things implemented in this script, checkout &lt;a href=&quot;https://github.com/rileyaft/KNeko&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5f83c1;&quot;&gt;the github page&lt;/span&gt;&lt;/a&gt; for the project!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/rileyaft/KNeko?tab=GPL-3.0-1-ov-file#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5f83c1;&quot;&gt;GPLv3&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Copyright (C) 2026 Riley Tinkl</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="spacerAppearance">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="configresource.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>categoryList</sender>
