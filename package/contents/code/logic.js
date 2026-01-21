@@ -1,3 +1,11 @@
+/*
+ *  KNeko - an onkeo implementation in kwinscript
+ *
+ *  SPDX-FileCopyrightText: 2026 Riley Tinkl <riley.aft@outlook.com>
+ *
+ *  SPDX-License-Identifier: GPL-3.0
+ */
+
 let config = {
     followType: 0,
     followRadius: 16,
@@ -7,6 +15,7 @@ let config = {
     idleTimeout: 15,
     appearance: 0,
     timerSpeed: 150,
+    virtualDesktopBehaviour: 0,
 };
 
 const followTypes = Object.freeze({
@@ -15,6 +24,12 @@ const followTypes = Object.freeze({
     // inWindow: 2,
     // onTaskbar: 3,
     // stationary: 4
+});
+
+const virtualDesktopBehaviours = Object.freeze({
+    trackAcross: 0,
+    pinned: 1,
+    locked: 2,
 });
 
 // TODO: Add more appearances from configuration UI
@@ -27,6 +42,14 @@ const spriteList = Object.freeze({
         width: 256,
         height: 128,
     },
+    Black: {
+        id: 1,
+        path: "img/black.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128
+    }
 });
 
 // Cred: https://github.com/adryd325/oneko.js
@@ -105,7 +128,7 @@ let cat = {
         scratching: false,
         grooming: false,
         suprised: false,
-        stuck: false,
+        stuck: false
     },
     frame_count: 0,
 };
@@ -152,18 +175,13 @@ function resetCatState() {
 }
 
 function init(root, cfg) {
-    print("Start init");
-
     for (const key in cfg) {
         if (config[key] == cfg[key]) config[key] = cfg[key];
     }
-
     const sprite = spriteInfo(config.appearance);
     root.spriteSource = sprite.path;
     root.tileW = sprite.tileWidth;
     root.tileH = sprite.tileHeight;
-
-    print("Init complete");
 }
 
 // Origin: Top left (0,0)
@@ -175,6 +193,7 @@ function tick(root) {
         cat.target_X = cursor.x + config.followOffsetX;
         cat.target_Y = cursor.y + config.followOffsetY;
     }
+
     const dx = cat.target_X - root.catX;
     const dy = cat.target_Y - root.catY;
 
@@ -198,4 +217,8 @@ function tick(root) {
             cat.state.moving = false;
         }
     }
+}
+
+function currentDesktopChanged(root, bounds) {
+
 }
