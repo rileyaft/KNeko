@@ -176,37 +176,6 @@
               </item>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QTextEdit" name="kcfg_FollowWindowClass">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>101010</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Window classes for KNeko to follow.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed window, in order of preference.&lt;/p&gt;&lt;p&gt;If none are available/valid, KNeko will idle.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="lineWrapMode">
-               <enum>QTextEdit::LineWrapMode::WidgetWidth</enum>
-              </property>
-              <property name="acceptRichText">
-               <bool>false</bool>
-              </property>
-              <property name="placeholderText">
-               <string>org.kde.dolphin, zen-browser</string>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="labelFollowRadius">
               <property name="text">
@@ -216,6 +185,18 @@
             </item>
             <item row="3" column="1">
              <widget class="QSpinBox" name="kcfg_FollowRadius">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>146</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="cursor">
                <cursorShape>SizeVerCursor</cursorShape>
               </property>
@@ -245,6 +226,12 @@
             </item>
             <item row="4" column="1">
              <widget class="QSpinBox" name="kcfg_FollowSpeed">
+              <property name="maximumSize">
+               <size>
+                <width>146</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="cursor">
                <cursorShape>SizeVerCursor</cursorShape>
               </property>
@@ -271,6 +258,12 @@
             </item>
             <item row="5" column="1">
              <widget class="QSpinBox" name="kcfg_IdleTimeout">
+              <property name="maximumSize">
+               <size>
+                <width>146</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="cursor">
                <cursorShape>SizeVerCursor</cursorShape>
               </property>
@@ -344,6 +337,19 @@
               </item>
              </layout>
             </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="kcfg_FollowWindowClass">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comma separated window classes.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed class in order of precidence.&lt;/p&gt;&lt;p&gt;If no windows match, KNeko will idle instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::InputMethodHint::ImhLatinOnly</set>
+              </property>
+              <property name="placeholderText">
+               <string>org.kde.dolphin,zen-browser-bin</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -395,6 +401,12 @@
             </item>
             <item row="2" column="1">
              <widget class="QSpinBox" name="kcfg_AnimationInterval">
+              <property name="maximumSize">
+               <size>
+                <width>154</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="cursor">
                <cursorShape>SizeVerCursor</cursorShape>
               </property>
@@ -673,7 +685,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="labelDetails">
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to see more things implemented in this script, checkout &lt;a href=&quot;https://github.com/rileyaft/KNeko&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5f83c1;&quot;&gt;the github page&lt;/span&gt;&lt;/a&gt; for the project!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -686,7 +698,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="labelLicense">
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/rileyaft/KNeko?tab=GPL-3.0-1-ov-file#readme&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5f83c1;&quot;&gt;GPLv3&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -696,9 +708,9 @@
              </widget>
             </item>
             <item row="5" column="1">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="labelCopyright">
               <property name="text">
-               <string>Copyright (C) 2026 Riley Tinkl</string>
+               <string>Copyright © 2026 Riley Tinkl</string>
               </property>
              </widget>
             </item>

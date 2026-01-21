@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kcfg xmlns="http://www.kde.org/standards/kcfg/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
     <kcfgfile name=""/>
-    <group name="General">
+    <group name="">
         <entry name="FollowType" type="Int">
             <default>0</default>
         </entry>
@@ -9,7 +9,7 @@
             <default>16</default>
         </entry>
         <entry name="FollowWindowClass" type="String">
-            <default/>
+            <default>org.kde.dolphin,zen-browser-bin</default>
         </entry>
         <entry name="FollowOffsetX" type="Int">
             <default>-32</default>
@@ -31,6 +31,21 @@
         </entry>
         <entry name="AnimationInterval" type="Int">
             <default>150</default>
+        </entry>
+        <entry name="FixedPositionX" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="FixedPositionY" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="UseUserSprite" type="Bool">
+            <default>0</default>
+        </entry>
+        <entry name="UserSprite" type="Url">
+            <default/>
+        </entry>
+        <entry name="EasterEgg" type="Bool">
+            <default>0</default>
         </entry>
     </group>
 </kcfg>

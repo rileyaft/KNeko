@@ -6,17 +6,7 @@
  *  SPDX-License-Identifier: GPL-3.0
  */
 
-let config = {
-    followType: 0,
-    followRadius: 16,
-    followOffsetX: -32,
-    followOffsetY: -32,
-    followSpeed: 15,
-    idleTimeout: 15,
-    appearance: 0,
-    timerSpeed: 150,
-    virtualDesktopBehaviour: 0,
-};
+"use strict";
 
 const followTypes = Object.freeze({
     mouse: 0,
@@ -48,8 +38,8 @@ const spriteList = Object.freeze({
         tileWidth: 32,
         tileHeight: 32,
         width: 256,
-        height: 128
-    }
+        height: 128,
+    },
 });
 
 // Cred: https://github.com/adryd325/oneko.js
@@ -128,7 +118,7 @@ let cat = {
         scratching: false,
         grooming: false,
         suprised: false,
-        stuck: false
+        stuck: false,
     },
     frame_count: 0,
 };
@@ -136,13 +126,6 @@ let cat = {
 let cursor = {
     x: 0,
     y: 0,
-};
-
-const spriteInfo = (val) => {
-    for (const key in spriteList) {
-        if (spriteList[key].id === val) return spriteList[key];
-    }
-    return spriteList.Neko;
 };
 
 function setSpriteAnim(root, anim) {
@@ -174,14 +157,18 @@ function resetCatState() {
     }
 }
 
-function init(root, cfg) {
-    for (const key in cfg) {
-        if (config[key] == cfg[key]) config[key] = cfg[key];
-    }
-    const sprite = spriteInfo(config.appearance);
+function spriteFinder(id) {
+    return (
+        Object.values(spriteList).find((s) => s.id === id) || spriteList.Neko
+    );
+}
+
+function sendConfig(root) {
+    const sprite = spriteFinder(CONFIG.appearance);
     root.spriteSource = sprite.path;
     root.tileW = sprite.tileWidth;
     root.tileH = sprite.tileHeight;
+    root.timerSpeed = CONFIG.timerSpeed;
 }
 
 // Origin: Top left (0,0)
@@ -189,9 +176,9 @@ function init(root, cfg) {
 function tick(root) {
     cat.frame_count++;
 
-    if (config.followType == followTypes["mouse"]) {
-        cat.target_X = cursor.x + config.followOffsetX;
-        cat.target_Y = cursor.y + config.followOffsetY;
+    if (CONFIG.followType == followTypes["mouse"]) {
+        cat.target_X = cursor.x + CONFIG.followOffsetX;
+        cat.target_Y = cursor.y + CONFIG.followOffsetY;
     }
 
     const dx = cat.target_X - root.catX;
@@ -199,13 +186,13 @@ function tick(root) {
 
     const dist = Math.hypot(dx, dy);
 
-    if (dist >= config.followRadius && dist != 0) {
+    if (dist >= CONFIG.followRadius && dist != 0) {
         // TODO: Implement all other cat states
         // Movement
         cat.last_moved = Date.now();
         cat.state.moving = true;
 
-        const step = Math.min(dist, config.followSpeed);
+        const step = Math.min(dist, CONFIG.followSpeed);
         root.catX = root.catX + (dx / dist) * step;
         root.catY = root.catY + (dy / dist) * step;
 
@@ -219,6 +206,64 @@ function tick(root) {
     }
 }
 
-function currentDesktopChanged(root, bounds) {
+// A large majority of this is KHRONKITE verbatim.
+// Talk about cobbled together code
 
+class KWinConfig {
+    constructor() {
+        function separate(str, separator) {
+            if (!str || typeof str !== "string") return [];
+            return str
+                .split(separator)
+                .map((part) => part.trim())
+                .filter((part) => part != "");
+        }
+
+        this.followType = KWIN.readConfig("FollowType", 0);
+        this.followRadius = KWIN.readConfig("FollowRadius", 16);
+        this.followWindowClass = separate(
+            KWIN.readConfig(
+                "FollowWindowClass",
+                "org.kde.dolphin,zen-browser-bin",
+            ),
+            ",",
+        );
+        this.followOffsetX = KWIN.readConfig("FollowOffsetX", -32);
+        this.followOffsetY = KWIN.readConfig("FollowOffsetY", -32);
+        this.followSpeed = KWIN.readConfig("FollowSpeed", 15);
+        this.idleTimeout = KWIN.readConfig("IdleTimeout", 15);
+        this.appearance = KWIN.readConfig("Appearance", 0);
+        this.timerSpeed = KWIN.readConfig("AnimationInterval", 150);
+        this.virtualDesktopBehaviour = KWIN.readConfig(
+            "VirtualDesktopBehaviour",
+            0,
+        );
+    }
+}
+
+let CONFIG;
+var KWINCONFIG;
+var KWIN;
+class KWinDriver {
+    get currentWindow() {
+        const client = this.workspace.activeWindow;
+        return client ? this.windowMap.get(client) : null;
+    }
+    set currentWindow(window) {
+        if (window !== null) {
+            window.timestamp = new Date().getTime();
+            this.workspace.activeWindow = window.window.window;
+        }
+    }
+
+    constructor(api) {
+        KWIN = api.kwin;
+        this.workspace = api.workspace;
+        this.shortcuts = api.shortcuts;
+    }
+    init() {
+        CONFIG = KWINCONFIG = new KWinConfig();
+        print(`Config: ${JSON.stringify(CONFIG)}`);
+        print("loaded config");
+    }
 }

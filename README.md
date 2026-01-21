@@ -15,6 +15,7 @@ Bolded features are those I need help implementing, if at all possible.
 ### Wishlist
 - [ ] **Make window *fully* transparent!** 
 - [ ] **Allow clickthrough on window**
+- [ ] **Hot configuration reloading**
 - [ ] All remaining animation types part of the original X11 Oneko implementation
 - [x] Configuration UI (QTWidgets module)
 - - [ ] Finish implementation of all config switches

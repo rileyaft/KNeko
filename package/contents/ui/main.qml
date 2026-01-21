@@ -25,21 +25,11 @@ PlasmaCore.Window {
     y: root.catY
 
     Item {
+        // "options": Options,
+
         // TODO: Add remaining functionality
         id: root
 
-        property var cfg: ({
-            "followType": KWin.readConfig("FollowType", 0),
-            "followRadius": KWin.readConfig("FollowRadius", 16),
-            "followOffsetX": KWin.readConfig("FollowOffsetX", -32),
-            "followOffsetY": KWin.readConfig("FollowOffsetY", -32),
-            "followSpeed": KWin.readConfig("FollowSpeed", 15),
-            "idleTimeout": KWin.readConfig("IdleTimeout", 15),
-            "appearance": KWin.readConfig("Appearance", 0),
-            "timerSpeed": KWin.readConfig("AnimationInterval", 150),
-            "virtualDesktopBehaviour": KWin.readConfig("VirtualDesktopBehaviour", 0)
-        })
-        // -
         // Owned by Logic (will be overwritten)
         property int tileW: 32
         property int tileH: 32
@@ -48,10 +38,17 @@ PlasmaCore.Window {
         property url spriteSource: "img/neko.png"
         property int catX: 128
         property int catY: 128
+        property int timerSpeed: 150
 
         Component.onCompleted: {
             print("[KNeko] Init");
-            Logic.init(root, root.cfg);
+            const api = {
+                "workspace": Workspace,
+                "kwin": KWin,
+                "shortcuts": shortcutsLoader.item
+            };
+            (new Logic.KWinDriver(api)).init();
+            Logic.sendConfig(root);
         }
 
         Image {
@@ -67,41 +64,27 @@ PlasmaCore.Window {
         }
 
         Connections {
-            // Logic.onDesktopChange(root, screenRect);
-
             function onCursorPosChanged() {
                 Logic.setCursorPos(KWin.Workspace.cursorPos.x, KWin.Workspace.cursorPos.y);
-            }
-
-            function currentDesktopChanged(previous) {
-                const screenRect = KWin.Workspace.Output.geometry;
-                const workspaceDims = ({
-                    "w": KWin.Workspace.workspaceWidth,
-                    "h": KWin.Workspace.workspaceHeight
-                });
-                print("[KNeko] Desktop Changed: (" + screenRect.left() + ", " + screenRect.right() + "), (" + workspaceDims.w + ", " + workspaceDims.h + ")");
             }
 
             target: KWin.Workspace
         }
 
-        Connections {
-            function onConfigChanged() {
-                print("[KNeko] Config updated! Reloading.");
-                Logic.init(root, root.cfg);
-            }
-
-            target: Options
-        }
-
         Timer {
-            interval: root.cfg.timerSpeed
+            interval: root.timerSpeed
             running: true
             repeat: true
             onTriggered: {
                 // print(win.x + " " + win.y);
                 Logic.tick(root);
             }
+        }
+
+        Loader {
+            id: shortcutsLoader
+
+            source: "shortcuts.qml"
         }
 
     }
