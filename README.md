@@ -16,7 +16,8 @@ Bolded features are those I need help implementing, if at all possible.
 - [ ] **Make window *fully* transparent!** 
 - [ ] **Allow clickthrough on window**
 - [ ] All remaining animation types part of the original X11 Oneko implementation
-- [ ] Configuration UI (QTWidgets module)
+- [x] Configuration UI (QTWidgets module)
+- - [ ] Finish implementation of all config switches
 - [ ] Follow types
 - - [x] Mouse
 - - - [ ] Follow on keybind? on click?
@@ -32,6 +33,7 @@ Bolded features are those I need help implementing, if at all possible.
 - [ ] **Smoothing similar to [geometry change desktop effect](https://github.com/peterfajdiga/kwin4_effect_geometry_change)**, for those who don't have it installed
 - [ ] Additional spritesets
 - [ ] Make Neko respond to being grabbed by user (*Meta + Click*)
+- [ ] Finish easteregg
 
 ### Not Planned
 These are features I don't plan on adding myself. If you'd like to see them added, send a pull request!
