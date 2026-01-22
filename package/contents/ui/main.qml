@@ -23,8 +23,6 @@ Window {
     y: root.catY
 
     Item {
-        // "options": Options,
-
         // TODO: Add remaining functionality
         id: root
 
@@ -34,8 +32,8 @@ Window {
         property int tileX: -3
         property int tileY: -3
         property url spriteSource: "img/neko.png"
-        property int catX: 128
-        property int catY: 128
+        property int catX: win.x
+        property int catY: win.y
         property int timerSpeed: 150
 
         Component.onCompleted: {

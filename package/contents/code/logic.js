@@ -22,7 +22,6 @@ const virtualDesktopBehaviours = Object.freeze({
     locked: 2,
 });
 
-// TODO: Add more appearances from configuration UI
 const spriteList = Object.freeze({
     Neko: {
         id: 0,
@@ -40,6 +39,54 @@ const spriteList = Object.freeze({
         width: 256,
         height: 128,
     },
+    Tabby: {
+        id: 2,
+        path: "img/tabby.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
+    Calico: {
+        id: 3,
+        path: "img/calico.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
+    Siamese: {
+        id: 4,
+        path: "img/siamese.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
+    Maia: {
+        id: 5,
+        path: "img/maia.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
+    Ghost: {
+        id: 6,
+        path: "img/ghost.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
+    Fox: {
+        id: 7,
+        path: "img/fox.png",
+        tileWidth: 32,
+        tileHeight: 32,
+        width: 256,
+        height: 128,
+    },
 });
 
 // Cred: https://github.com/adryd325/oneko.js
@@ -47,10 +94,10 @@ const spriteList = Object.freeze({
 const spriteMap = Object.freeze({
     idle: [[-3, -3]],
     alert: [[-7, -3]],
+    think: [[-7, 0]],
     scratchSelf: [
         [-5, 0],
         [-6, 0],
-        [-7, 0],
     ],
     scratchWallN: [
         [0, 0],
@@ -111,25 +158,58 @@ let cat = {
     target_X: 0,
     target_Y: 0,
     last_moved: Date.now(),
-    state: {
-        moving: false,
-        yawning: false,
-        sleeping: false,
-        scratching: false,
-        grooming: false,
-        suprised: false,
-        stuck: false,
+    state: "idle",
+    cooldown: {
+        scratching: 0,
+        thinking: 0,
+        stuck: 0,
     },
     frame_count: 0,
+    skip_frame: 0,
 };
+
+const stateHandlers = Object.freeze({
+    idle: pass,
+    alert: pass,
+    moving: doIdleState,
+    tired: doTiredState,
+    sleeping: doSleepState,
+    scratching: doScratchState,
+    think: doThinkState,
+    stuck: doStuckState,
+    grabbed: doGrabState,
+});
 
 let cursor = {
     x: 0,
     y: 0,
 };
 
-function setSpriteAnim(root, anim) {
-    const sprite = spriteMap[anim][cat.frame_count % spriteMap[anim].length];
+function setAnimState(root, anim, frame) {
+    const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    const stuck = [
+        "scratchWallN",
+        "scratchWallE",
+        "scratchWallS",
+        "scratchWallW",
+    ];
+
+    if (directions.includes(anim)) {
+        cat.state = "moving";
+    } else if (stuck.includes(anim)) {
+        cat.state = "stuck";
+    } else if (anim === "scratchSelf") {
+        cat.state = "scratching";
+    } else if (anim === "grabbed") {
+        // TODO: grabbed state animation handling
+        // maybe return?
+    } else cat.state = anim;
+
+    let sprite;
+    if (frame === undefined)
+        sprite = spriteMap[anim][cat.frame_count % spriteMap[anim].length];
+    else sprite = spriteMap[anim][frame];
+
     root.tileX = sprite[0];
     root.tileY = sprite[1];
 }
@@ -151,16 +231,100 @@ function setCursorPos(curs_X, curs_Y) {
     ((cursor.x = curs_X), (cursor.y = curs_Y));
 }
 
-function resetCatState() {
-    for (const key in cat.state) {
-        cat.state[key] = false;
+// Alert state acts as an "override"
+function doAlertState(root) {
+    setAnimState(root, "alert");
+    cat.skip_frame = 3;
+}
+
+function doIdleState(root) {
+    setAnimState(root, "idle");
+}
+
+function doTiredState(root) {
+    if (cat.state != "tired") {
+        setAnimState(root, "tired");
+        cat.skip_frame = 7;
+    } else
+        if (cat.skip_frame <= 0) {
+            setAnimState(root, "sleeping", 0);
+        }
+}
+
+function doSleepState(root) {
+    if (cat.skip_frame <= 0) cat.skip_frame = 14;
+    if (cat.skip_frame >= 7) setAnimState(root, "sleeping", 0);
+    else setAnimState(root, "sleeping", 1);
+}
+
+// TODO
+function doScratchState(root) { }
+
+function doThinkState(root) {
+    if (cat.state != "think") {
+        setAnimState(root, "think");
+        cat.skip_frame = 7;
+    } else
+        if (cat.skip_frame <= 0) {
+            setAnimState(root, "idle");
+            cat.cooldown.thinking = Date.now() + 2 * CONFIG.idleTimeout;
+        }
+}
+
+// TODO
+function doStuckState(root) { }
+
+function doFollowState(root, dist) {
+    const step = Math.min(dist.hyp, CONFIG.followSpeed);
+    root.catX = root.catX + (dist.dx / dist.hyp) * step;
+    root.catY = root.catY + (dist.dy / dist.hyp) * step;
+    setAnimState(root, directionFinder(dist.dx, dist.dy));
+}
+
+// TODO
+function doGrabState(root) { }
+
+function runCatState(root) {
+    if (cat.state != "idle") {
+        stateHandlers[cat.state](root);
+    } else {
+        // Decide which state to use
+        if (Date.now() - cat.last_moved > CONFIG.sleepTimeout) {
+            if (cat.state != "sleeping") doTiredState(root);
+            else doSleepState(root);
+        }
+        if (Date.now() - cat.last_moved > CONFIG.idleTimeout) {
+            let rnd = getRandomInt(10);
+            if (rnd >= 7 && cat.cooldown.thinking < Date.now()) {
+                doThinkState(root);
+            }
+        }
     }
 }
 
 function spriteFinder(id) {
-    return (
-        Object.values(spriteList).find((s) => s.id === id) || spriteList.Neko
-    );
+    if (CONFIG.useUserSprite === true) {
+        const obj = {
+            path: CONFIG.userSpritePath,
+        };
+        return obj;
+    } else
+        return (
+            Object.values(spriteList).find((s) => s.id === id) ||
+            spriteList.Neko
+        );
+}
+
+// TODO: implement figuring out if the cat would get stuck, and calculating appropriate target
+function targetFinder() {
+    if (CONFIG.followType == followTypes["mouse"]) {
+        cat.target_X = cursor.x + CONFIG.followOffsetX;
+        cat.target_Y = cursor.y + CONFIG.followOffsetY;
+    }
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
 }
 
 function sendConfig(root) {
@@ -175,39 +339,40 @@ function sendConfig(root) {
 // Down and right are positive
 function tick(root) {
     cat.frame_count++;
-
-    if (CONFIG.followType == followTypes["mouse"]) {
-        cat.target_X = cursor.x + CONFIG.followOffsetX;
-        cat.target_Y = cursor.y + CONFIG.followOffsetY;
+    if (cat.skip_frame > 0) {
+        cat.skip_frame--;
     }
+    targetFinder();
+    let dist = {
+        dx: cat.target_X - root.catX,
+        dy: cat.target_Y - root.catY,
+        hyp: 0,
+    };
+    dist.hyp = Math.hypot(dist.dx, dist.dy);
 
-    const dx = cat.target_X - root.catX;
-    const dy = cat.target_Y - root.catY;
+    // print(`${JSON.stringify(dist)}`);
 
-    const dist = Math.hypot(dx, dy);
+    if (dist.hyp >= CONFIG.followRadius && dist.hyp !== 0) {
+        if (Date.now() - cat.last_moved > CONFIG.idleTimeout) {
+            doAlertState(root);
+        }
 
-    if (dist >= CONFIG.followRadius && dist != 0) {
-        // TODO: Implement all other cat states
-        // Movement
         cat.last_moved = Date.now();
-        cat.state.moving = true;
-
-        const step = Math.min(dist, CONFIG.followSpeed);
-        root.catX = root.catX + (dx / dist) * step;
-        root.catY = root.catY + (dy / dist) * step;
-
-        setSpriteAnim(root, directionFinder(dx, dy));
+        if (cat.skip_frame <= 0) doFollowState(root, dist);
     } else {
         // Non-moving animations
-        if (cat.state.moving === true) {
-            setSpriteAnim(root, "idle");
-            cat.state.moving = false;
-        }
+        runCatState(root);
     }
 }
 
 // A large majority of this is KHRONKITE verbatim.
-// Talk about cobbled together code
+// Talk about cobbled together code (mine, not theirs)
+
+const Shortcut = {
+    ToggleFollow: 1,
+    ForceReload: 2,
+};
+const ShorcutsKeys = Object.keys(Shortcut);
 
 class KWinConfig {
     constructor() {
@@ -231,13 +396,16 @@ class KWinConfig {
         this.followOffsetX = KWIN.readConfig("FollowOffsetX", -32);
         this.followOffsetY = KWIN.readConfig("FollowOffsetY", -32);
         this.followSpeed = KWIN.readConfig("FollowSpeed", 15);
-        this.idleTimeout = KWIN.readConfig("IdleTimeout", 15);
+        this.idleTimeout = KWIN.readConfig("IdleTimeout", 1000);
+        this.sleepTimeout = KWIN.readConfig("SleepTimeout", 10) * 1000;
         this.appearance = KWIN.readConfig("Appearance", 0);
         this.timerSpeed = KWIN.readConfig("AnimationInterval", 150);
         this.virtualDesktopBehaviour = KWIN.readConfig(
             "VirtualDesktopBehaviour",
             0,
         );
+        this.useUserSprite = KWIN.readConfig("UseUserSprite", false);
+        this.userSpritePath = KWIN.readConfig("UserSprite", "img/neko.png");
     }
 }
 
@@ -245,6 +413,7 @@ let CONFIG;
 var KWINCONFIG;
 var KWIN;
 class KWinDriver {
+
     get currentWindow() {
         const client = this.workspace.activeWindow;
         return client ? this.windowMap.get(client) : null;
@@ -256,14 +425,25 @@ class KWinDriver {
         }
     }
 
+
     constructor(api) {
         KWIN = api.kwin;
         this.workspace = api.workspace;
         this.shortcuts = api.shortcuts;
+        this.entered = false;
     }
     init() {
         CONFIG = KWINCONFIG = new KWinConfig();
         print(`Config: ${JSON.stringify(CONFIG)}`);
         print("loaded config");
     }
+
+}
+
+function warning(s) {
+    print(`[KNeko.WARNING]: ${s}`);
+}
+
+function pass() {
+    return;
 }

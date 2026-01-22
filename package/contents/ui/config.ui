@@ -176,6 +176,32 @@
               </item>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelFollowWindowClass">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Window class</string>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="kcfg_FollowWindowClass">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comma separated window classes.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed class in order of precidence.&lt;/p&gt;&lt;p&gt;If no windows match, KNeko will idle instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::InputMethodHint::ImhLatinOnly</set>
+              </property>
+              <property name="placeholderText">
+               <string>org.kde.dolphin,zen-browser-bin</string>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="labelFollowRadius">
               <property name="text">
@@ -252,7 +278,7 @@
             <item row="5" column="0">
              <widget class="QLabel" name="labelIdleTimeout">
               <property name="text">
-               <string>Idle timeout (s)</string>
+               <string>Idle timeout (ms)</string>
               </property>
              </widget>
             </item>
@@ -271,82 +297,13 @@
                <number>0</number>
               </property>
               <property name="maximum">
-               <number>3600</number>
+               <number>1000000</number>
+              </property>
+              <property name="singleStep">
+               <number>150</number>
               </property>
               <property name="value">
-               <number>15</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelFollowWindowClass">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="text">
-               <string>Window class</string>
-              </property>
-              <property name="wordWrap">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="labelFixedPos">
-              <property name="text">
-               <string>Spawn Position (x,y)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <layout class="QFormLayout" name="groupFixedPositions">
-              <property name="fieldGrowthPolicy">
-               <enum>QFormLayout::FieldGrowthPolicy::ExpandingFieldsGrow</enum>
-              </property>
-              <item row="0" column="0">
-               <widget class="QSpinBox" name="kcfg_FixedPositionX">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>SizeVerCursor</cursorShape>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QSpinBox" name="kcfg_FixedPositionY">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>SizeVerCursor</cursorShape>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="kcfg_FollowWindowClass">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comma separated window classes.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed class in order of precidence.&lt;/p&gt;&lt;p&gt;If no windows match, KNeko will idle instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="inputMethodHints">
-               <set>Qt::InputMethodHint::ImhLatinOnly</set>
-              </property>
-              <property name="placeholderText">
-               <string>org.kde.dolphin,zen-browser-bin</string>
+               <number>1000</number>
               </property>
              </widget>
             </item>
@@ -369,7 +326,7 @@
          <item>
           <widget class="QLabel" name="labelNote">
            <property name="text">
-            <string>Note: in order for settings to apply, you need to reload the script.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Note&lt;/span&gt;: in order for settings to apply, you need to reload the script.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -399,38 +356,6 @@
              <widget class="QLabel" name="labelOffsetX">
               <property name="text">
                <string>Follow offset (px)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="labelAnimInterval">
-              <property name="text">
-               <string>Animation interval (ms)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QSpinBox" name="kcfg_AnimationInterval">
-              <property name="maximumSize">
-               <size>
-                <width>154</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="cursor">
-               <cursorShape>SizeVerCursor</cursorShape>
-              </property>
-              <property name="minimum">
-               <number>50</number>
-              </property>
-              <property name="maximum">
-               <number>10000</number>
-              </property>
-              <property name="singleStep">
-               <number>50</number>
-              </property>
-              <property name="value">
-               <number>150</number>
               </property>
              </widget>
             </item>
@@ -475,6 +400,38 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelAnimInterval">
+              <property name="text">
+               <string>Animation interval (ms)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="kcfg_AnimationInterval">
+              <property name="maximumSize">
+               <size>
+                <width>154</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="cursor">
+               <cursorShape>SizeVerCursor</cursorShape>
+              </property>
+              <property name="minimum">
+               <number>50</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="singleStep">
+               <number>50</number>
+              </property>
+              <property name="value">
+               <number>150</number>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -527,12 +484,42 @@
                 <string>Black</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Tabby</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Calico</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Siamese</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Maia</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ghost</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Fox</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="labelUserSprite">
               <property name="text">
-               <string>User Sprite</string>
+               <string>User sprite</string>
               </property>
              </widget>
             </item>
@@ -542,20 +529,20 @@
                <bool>false</bool>
               </property>
               <property name="toolTip">
-               <string>Path to the spritemap image</string>
-              </property>
-              <property name="text">
-               <string>$HOME/Pictures/neko.png</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Absoulte path to the spritemap image&lt;/p&gt;&lt;p&gt;If on reload, there is no image, check the validity of the path&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="cursorPosition">
-               <number>23</number>
+               <number>0</number>
+              </property>
+              <property name="placeholderText">
+               <string>/home/rileyaft/Pictures/neko.png</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
              <widget class="QCheckBox" name="kcfg_UseUserSprite">
               <property name="text">
-               <string>Use provided sprite?</string>
+               <string>Use user sprite?</string>
               </property>
              </widget>
             </item>
@@ -578,9 +565,12 @@
          <item>
           <widget class="QLabel" name="labelAppearanceInfo">
            <property name="text">
-            <string>To make KNeko run smoothy, rather than jump, install the desktop effect &quot;Geometry Change&quot; and enable it.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For an example on what a custom spritesheet looks like, check out the &lt;a href=&quot;https://github.com/rileyaft/KNeko/tree/main/package/contents/ui/img&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5f83c1;&quot;&gt;existing images&lt;/span&gt;&lt;/a&gt; on the github page.&lt;/p&gt;&lt;p&gt;To make KNeko run smoothy, rather than jump, install the desktop effect &amp;quot;Geometry Change&amp;quot; and enable it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="openExternalLinks">
             <bool>true</bool>
            </property>
           </widget>
@@ -751,22 +741,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>categoryList</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>pages</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>83</x>
-     <y>202</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>335</x>
-     <y>202</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>kcfg_UseUserSprite</sender>
    <signal>toggled(bool)</signal>
    <receiver>kcfg_UserSprite</receiver>
@@ -779,6 +753,22 @@
     <hint type="destinationlabel">
      <x>373</x>
      <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>categoryList</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>pages</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>202</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
