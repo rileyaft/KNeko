@@ -34,8 +34,15 @@ Window {
         property url spriteSource: "img/neko.png"
         property int catX: win.x
         property int catY: win.y
-        property int timerSpeed: 150
         property var cat
+
+        function refreshState() {
+            const c = Logic.getCat();
+            catX = c.x;
+            catY = c.y;
+            tileX = c.tile_X;
+            tileY = c.tile_Y;
+        }
 
         Component.onCompleted: {
             print("[KNeko] Init");
@@ -45,8 +52,8 @@ Window {
                 "shortcuts": shortcutsLoader.item
             };
             (new Logic.KWinDriver(api)).init();
-            Logic.sendConfig(root);
-            root.cat = Logic.getCat();
+            Logic.initState(root);
+            root.cat = Logic.getCat(win);
         }
 
         Image {
@@ -70,13 +77,14 @@ Window {
         }
 
         Timer {
-            interval: root.timerSpeed
+            interval: 16
             running: true
             repeat: true
             onTriggered: {
-                if (root.cat)
-                    root.cat.tick(root);
-
+                if (root.cat) {
+                    root.cat.tick();
+                    root.refreshState();
+                }
             }
         }
 

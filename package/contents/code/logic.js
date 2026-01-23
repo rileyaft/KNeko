@@ -1,5 +1,5 @@
 /*
- *  KNeko - an onkeo implementation in kwinscript
+ *  KNeko - an oneko implementation in kwinscript
  *
  *  SPDX-FileCopyrightText: 2026 Riley Tinkl <riley.aft@outlook.com>
  *
@@ -23,17 +23,42 @@ const virtualDesktopBehaviours = Object.freeze({
 });
 
 let catInstance = null;
-function getCat() {
-    if (!catInstance)
-        catInstance = new CatDriver();
+let CONFIG;
+function getCat(win) {
+    if (win === "undefined" && catInstance) return catInstance;
+    if (!catInstance) catInstance = new CatDriver(win);
     return catInstance;
 }
 
+function initState(root) {
+    const sprite = CatDriver.spriteFinder(CONFIG.appearance);
+    root.spriteSource = sprite.path;
+    root.tileW = sprite.tileWidth;
+    root.tileH = sprite.tileHeight;
+}
+
+let cursor = {
+    x: 0,
+    y: 0,
+};
+
+function setCursorPos(curs_X, curs_Y) {
+    ((cursor.x = curs_X), (cursor.y = curs_Y));
+}
+
 class CatDriver {
-    constructor() {
+    constructor(win) {
+        this.x = win.x;
+        this.y = win.y;
+        this.tile_X = -3;
+        this.tile_Y = -3;
+
         this.target_X = 0;
         this.target_Y = 0;
         this.last_moved = Date.now();
+        this.last_update = Date.now();
+        this.anim_accum = 0;
+
         this.state = "idle";
         this.cooldown = {
             scratching: 0,
@@ -42,32 +67,48 @@ class CatDriver {
         };
         this.frame_count = 0;
         this.skip_frame = 0;
+        this.anim_loops = 0;
+    }
+
+    tick() {
+        const now = Date.now();
+        const delta = now - this.last_update;
+        this.last_update = now;
+
+        this.anim_accum += delta;
+
+        if (this.anim_accum >= CONFIG.timerSpeed) {
+            const steps = Math.floor(this.anim_accum / CONFIG.timerSpeed);
+            this.anim_accum -= steps * CONFIG.timerSpeed;
+
+            this.frame_count += steps;
+            this.doLogic();
+        }
     }
 
     // Origin: Top left (0,0)
     // Down and right are positive
-    tick(root) {
-        this.frame_count++;
+    doLogic() {
         if (this.skip_frame > 0) {
             this.skip_frame--;
         }
         CatDriver.targetFinder(this);
-        const dx = this.target_X - root.catX;
-        const dy = this.target_Y - root.catY;
+        const dx = this.target_X - this.x;
+        const dy = this.target_Y - this.y;
         const hyp = Math.hypot(dx, dy);
 
         // print(`${JSON.stringify(dist)}`);
 
         if (hyp >= CONFIG.followRadius && hyp !== 0) {
             if (Date.now() - this.last_moved > CONFIG.idleTimeout) {
-                this.doAlertState(root);
+                this.doAlertState();
             }
 
             this.last_moved = Date.now();
-            if (this.skip_frame <= 0) this.doFollowState(root, { dx, dy, hyp });
+            if (this.skip_frame <= 0) this.doFollowState({ dx, dy, hyp });
         } else {
             // Non-moving animations
-            this.runCatState(root);
+            this.runCatState();
         }
     }
 
@@ -105,7 +146,7 @@ class CatDriver {
         }
     }
 
-    setAnimState(root, anim, frame) {
+    setAnimState(anim, frame) {
         const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
         const stuck = [
             "scratchWallN",
@@ -124,97 +165,101 @@ class CatDriver {
         } else this.state = anim;
 
         let sprite;
-        if (frame === undefined)
-            sprite = CatDriver.spriteMap[anim][this.frame_count % CatDriver.spriteMap[anim].length];
-        else sprite = CatDriver.spriteMap[anim][frame];
+        if (frame === undefined) {
+            const _frame = this.frame_count % CatDriver.spriteMap[anim].length;
+            sprite = CatDriver.spriteMap[anim][_frame];
+        } else sprite = CatDriver.spriteMap[anim][frame];
 
-        root.tileX = sprite[0];
-        root.tileY = sprite[1];
+        this.tile_X = sprite[0];
+        this.tile_Y = sprite[1];
     }
 
     setCooldown(state, scale) {
-        this.cooldown[state] = Date.now() + scale * CONFIG.idleTimeout;
+        this.cooldown[state] = Date.now() + scale * 1000;
     }
 
-    runCatState(root) {
+    runCatState() {
         if (this.state != "idle") {
             // Continue calling state if still active
             const methodName = CatDriver.stateHandlers[this.state];
             if (methodName && typeof this[methodName] === "function") {
-                this[methodName](root);
+                this[methodName]();
                 return;
             }
-            this.doIdleState(root);
+            this.doIdleState();
         } else {
             // Decide which state to use
-            if (Date.now() - this.last_moved > CONFIG.sleepTimeout) {
-                if (this.state != "sleeping") this.doTiredState(root);
-                else this.doSleepState(root);
+            const diff = Date.now() - this.last_moved;
+            if (diff > CONFIG.sleepTimeout) {
+                if (this.state != "sleeping") this.doTiredState();
+                else this.doSleepState();
             }
-            if (Date.now() - this.last_moved > CONFIG.idleTimeout) {
-                let rnd = getRandomInt(10);
-                if (rnd >= 7 && this.cooldown.think < Date.now()) {
-                    this.doThinkState(root);
+            if (diff > CONFIG.idleTimeout) {
+                let rnd = getRandomInt(100);
+                if (rnd >= 90 && this.cooldown.think < Date.now()) {
+                    this.doThinkState();
+                } else if (rnd >= 85 && this.cooldown.scratching < Date.now()) {
+                    this.doScratchState();
                 }
             }
         }
     }
 
     // Alert state acts as an "override"
-    doAlertState(root) {
-        this.setAnimState(root, "alert");
+    doAlertState() {
+        this.setAnimState("alert");
         this.skip_frame = 3;
     }
-    doIdleState(root) {
-        this.setAnimState(root, "idle");
+    doIdleState() {
+        this.setAnimState("idle");
     }
-    doTiredState(root) {
+    doTiredState() {
         if (this.state != "tired") {
-            this.setAnimState(root, "tired");
+            this.setAnimState("tired");
             this.skip_frame = 7;
-        } else
-            if (this.skip_frame <= 0) {
-                this.setAnimState(root, "sleeping", 0);
-            }
+        } else if (this.skip_frame <= 0) {
+            this.setAnimState("sleeping", 0);
+        }
     }
-    doSleepState(root) {
+    doSleepState() {
         if (this.skip_frame <= 0) this.skip_frame = 14;
-        if (this.skip_frame >= 7) this.setAnimState(root, "sleeping", 0);
-        else this.setAnimState(root, "sleeping", 1);
+        if (this.skip_frame >= 7) this.setAnimState("sleeping", 0);
+        else this.setAnimState("sleeping", 1);
     }
-    doScratchState(root) {
+    doScratchState() {
         if (this.state != "scratching") {
-            this.setAnimState(root, "scratching");
-            this.skip_frame = 7;
-        } else
-            if (this.skip_frame <= 0) {
-                this.setAnimState(root, "idle");
-                this.setCooldown("scratching", 2);
-            }
+            this.anim_loops = 14;
+        }
+        if (this.anim_loops <= 0) {
+            this.setAnimState("idle");
+            this.setCooldown("scratching", 5);
+            return;
+        }
+        this.anim_loops--;
+        this.setAnimState("scratching", this.anim_loops % 2);
     }
-    doThinkState(root) {
+    doThinkState() {
         if (this.state != "think") {
-            this.setAnimState(root, "think");
+            this.setAnimState("think");
             this.skip_frame = 7;
-        } else
-            if (this.skip_frame <= 0) {
-                this.setAnimState(root, "idle");
-                this.setCooldown("think", 2);
-            }
+        } else if (this.skip_frame <= 0) {
+            this.setAnimState("idle");
+            this.setCooldown("think", 5);
+        }
     }
     // TODO
-    doStuckState(root) {
-
+    doStuckState() {
+        //
     }
-    doFollowState(root, dist) {
+    doFollowState(dist) {
         const step = Math.min(dist.hyp, CONFIG.followSpeed);
-        root.catX = root.catX + (dist.dx / dist.hyp) * step;
-        root.catY = root.catY + (dist.dy / dist.hyp) * step;
-        this.setAnimState(root, CatDriver.directionFinder(dist.dx, dist.dy));
+        this.x += (dist.dx / dist.hyp) * step;
+        this.y += (dist.dy / dist.hyp) * step;
+        this.setAnimState(CatDriver.directionFinder(dist.dx, dist.dy));
     }
     // TODO
-    doGrabState(root) {
-
+    doGrabState() {
+        //
     }
 }
 
@@ -360,28 +405,10 @@ class CatDriver {
         stuck: "doStuckState",
         grabbed: "doGrabState",
     });
-
 })();
-
-let cursor = {
-    x: 0,
-    y: 0,
-};
-
-function setCursorPos(curs_X, curs_Y) {
-    ((cursor.x = curs_X), (cursor.y = curs_Y));
-}
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-}
-
-function sendConfig(root) {
-    const sprite = CatDriver.spriteFinder(CONFIG.appearance);
-    root.spriteSource = sprite.path;
-    root.tileW = sprite.tileWidth;
-    root.tileH = sprite.tileHeight;
-    root.timerSpeed = CONFIG.timerSpeed;
 }
 
 // A large majority of this is KHRONKITE verbatim.
@@ -428,7 +455,6 @@ class KWinConfig {
     }
 }
 
-let CONFIG;
 var KWINCONFIG;
 var KWIN;
 class KWinDriver {
