@@ -35,6 +35,7 @@ Window {
         property int catX: win.x
         property int catY: win.y
         property int timerSpeed: 150
+        property var cat
 
         Component.onCompleted: {
             print("[KNeko] Init");
@@ -45,6 +46,7 @@ Window {
             };
             (new Logic.KWinDriver(api)).init();
             Logic.sendConfig(root);
+            root.cat = Logic.getCat();
         }
 
         Image {
@@ -72,8 +74,9 @@ Window {
             running: true
             repeat: true
             onTriggered: {
-                // print(win.x + " " + win.y);
-                Logic.tick(root);
+                if (root.cat)
+                    root.cat.tick(root);
+
             }
         }
 
