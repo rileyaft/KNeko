@@ -1,5 +1,5 @@
 /*
- *  KNeko - an onkeo implementation in kwinscript
+ *  KNeko - an oneko implementation in kwinscript
  *
  *  SPDX-FileCopyrightText: 2026 Riley Tinkl <riley.aft@outlook.com>
  *

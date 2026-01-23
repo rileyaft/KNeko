@@ -105,7 +105,7 @@
        <string>About</string>
       </property>
       <property name="icon">
-       <iconset theme="user_icon"/>
+       <iconset theme="help-about"/>
       </property>
      </item>
     </widget>
