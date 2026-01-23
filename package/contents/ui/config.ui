@@ -149,6 +149,12 @@
             </item>
             <item row="0" column="1">
              <widget class="QComboBox" name="kcfg_FollowType">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>So far, only mouse cursor tracking has been implemented</string>
+              </property>
               <item>
                <property name="text">
                 <string>Mouse cursor</string>
@@ -191,8 +197,11 @@
             </item>
             <item row="2" column="1">
              <widget class="QLineEdit" name="kcfg_FollowWindowClass">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comma separated window classes.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed class in order of precidence.&lt;/p&gt;&lt;p&gt;If no windows match, KNeko will idle instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Not yet implemented.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Comma separated window classes.&lt;/p&gt;&lt;p&gt;KNeko will follow the first listed class in order of precidence.&lt;/p&gt;&lt;p&gt;If no windows match, KNeko will idle instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="inputMethodHints">
                <set>Qt::InputMethodHint::ImhLatinOnly</set>
@@ -304,6 +313,26 @@
               </property>
               <property name="value">
                <number>1000</number>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="labelSleepTimeout">
+              <property name="text">
+               <string>Sleep timeout (s)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QSpinBox" name="kcfg_SleepTimeout">
+              <property name="maximumSize">
+               <size>
+                <width>146</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="value">
+               <number>10</number>
               </property>
              </widget>
             </item>
@@ -599,9 +628,6 @@
               <property name="enabled">
                <bool>true</bool>
               </property>
-              <property name="cursor">
-               <cursorShape>ForbiddenCursor</cursorShape>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
@@ -653,7 +679,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>An Onkeo implementation in kwinscript</string>
+                 <string>An Oneko implementation in kwinscript</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
