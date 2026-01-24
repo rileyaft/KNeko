@@ -9,4 +9,4 @@ uninstall:
 	kpackagetool6 --type=KWin/Script -r kneko
 
 package:
-	tar -czf ./kneko_{subst .,_,${VERSION}}.tar.gz ./package --transform s/package/kneko/
+	zip kneko-${VERSION}.kwinscript -r ./package
