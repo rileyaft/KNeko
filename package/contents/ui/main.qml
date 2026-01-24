@@ -11,19 +11,20 @@ import QtQuick
 import QtQuick.Window
 import org.kde.kwin
 
+// TODO: Separate main into two files for multiple cat states
+// TODO: Config window loader
 Window {
     id: win
 
     visible: true
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.NoDropShadowHint | Qt.WindowTransparentForInput
     color: "transparent"
-    width: root.tileW
-    height: root.tileH
+    width: root.tileW * root.scale
+    height: root.tileH * root.scale
     x: root.catX
     y: root.catY
 
     Item {
-        // TODO: Add remaining functionality
         id: root
 
         // Owned by Logic (will be overwritten)
@@ -32,6 +33,7 @@ Window {
         property int tileX: -3
         property int tileY: -3
         property url spriteSource: "img/neko.png"
+        property double scale: 1
         property int catX: win.x
         property int catY: win.y
         property var cat
@@ -59,8 +61,8 @@ Window {
         Image {
             id: sprite
 
-            width: root.tileW
-            height: root.tileH
+            width: root.tileW * root.scale
+            height: root.tileH * root.scale
             source: root.spriteSource
             smooth: false
             // -

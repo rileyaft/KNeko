@@ -22,6 +22,20 @@ const virtualDesktopBehaviours = Object.freeze({
     locked: 2,
 });
 
+const catScales = Object.freeze({
+    0: 0.25,
+    1: 0.5,
+    2: 0.75,
+    3: 1,
+    4: 1.25,
+    5: 1.5,
+    6: 1.75,
+    7: 2,
+    8: 2.5,
+    9: 3,
+    10: 4,
+});
+
 let catInstance = null;
 let CONFIG;
 function getCat(win) {
@@ -35,6 +49,7 @@ function initState(root) {
     root.spriteSource = sprite.path;
     root.tileW = sprite.tileWidth;
     root.tileH = sprite.tileHeight;
+    root.scale = CONFIG.catScale;
 }
 
 let cursor = {
@@ -452,6 +467,7 @@ class KWinConfig {
         );
         this.useUserSprite = KWIN.readConfig("UseUserSprite", false);
         this.userSpritePath = KWIN.readConfig("UserSprite", "img/neko.png");
+        this.catScale = catScales[KWIN.readConfig("CatScale", 3)];
     }
 }
 

@@ -2,7 +2,7 @@
     "KPlugin": {
         "Name": "KNeko",
         "Description": "An Oneko implementation in kwinscript",
-        "Icon": "emote-love",
+        "Icon": "preferences-desktop-gestures-touch",
 
         "Authors": [
             {
@@ -11,7 +11,7 @@
             }
         ],
         "Id": "kneko",
-        "Version": "0.0.4",
+        "Version": "0.0.5",
         "License": "GPLv3",
         "Website": "https://github.com/rileyaft/KNeko"
     },

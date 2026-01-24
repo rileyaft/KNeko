@@ -31,6 +31,7 @@ Bolded features are those I need help implementing, if at all possible.
 > This was solved by using a regular Window QQC2 object, not PlasmaCore.Window, which carries plasma's window theming.
 - [ ] **Allow clickthrough on window**
 - [ ] **Hot configuration reloading**
+> Supposedly, this can be done via a separate window outside of config.ui, made from a hotkey (see [here, by rxappdev](https://github.com/rxappdev/RememberWindowPositions)). May choose to do any non-standard (or per-desktop, etc) config here, with a hotkey and descriptor shown in config.ui
 - [x] All remaining animation types part of the original X11 Oneko implementation
 - [x] Configuration UI (QTWidgets module)
 - - [ ] Finish implementation of all config switches

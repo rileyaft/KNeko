@@ -50,6 +50,9 @@
         <entry name="UserSprite" type="Url">
             <default/>
         </entry>
+        <entry name="CatScale" type="Int">
+            <default>3</default>
+        </entry>
         <entry name="EasterEgg" type="Bool">
             <default>0</default>
         </entry>
