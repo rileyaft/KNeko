@@ -15,18 +15,18 @@ import org.kde.kwin
 // TODO: Config window loader
 Window {
     id: win
+    property real fixedWidth: root.tileW * root.scale
+    property real fixedHeight: root.tileH * root.scale
 
     visible: true
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.NoDropShadowHint | Qt.WindowTransparentForInput
     color: "transparent"
-    width: root.tileW * root.scale
-    height: root.tileH * root.scale
-    minimumHeight: height
-    minimumWidth: width
-    maximumHeight: minimumHeight
-    maximumWidth: miminumWidth
+    width: fixedWidth
+    height: fixedHeight
     x: root.catX
     y: root.catY
+    onWidthChanged: if (width !== fixedWidth) width = fixedWidth
+    onHeightChanged: if (height !== fixedHeight) height = fixedHeight
 
     Item {
         id: root
