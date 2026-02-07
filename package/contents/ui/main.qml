@@ -21,6 +21,10 @@ Window {
     color: "transparent"
     width: root.tileW * root.scale
     height: root.tileH * root.scale
+    minimumHeight: height
+    minimumWidth: width
+    maximumHeight: minimumHeight
+    maximumWidth: miminumWidth
     x: root.catX
     y: root.catY
 
