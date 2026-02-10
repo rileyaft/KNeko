@@ -468,6 +468,7 @@ class KWinConfig {
         this.useUserSprite = KWIN.readConfig("UseUserSprite", false);
         this.userSpritePath = KWIN.readConfig("UserSprite", "img/neko.png");
         this.catScale = catScales[KWIN.readConfig("CatScale", 3)];
+        this.shortcutInfo = KWIN.readConfig("Shortcut", "");
     }
 }
 
@@ -555,6 +556,271 @@ class KWinDriver {
         } finally {
             this.entered = false;
         }
+    }
+}
+
+class KWinSurface {
+    static getHash(s) {
+        let hash = 0;
+        if (s.length == 0) return `0`;
+        for (let i = 0; i < s.length; i++) {
+            let charCode = s.charCodeAt(i);
+            hash = (hash << 5) - hash + charCode;
+            hash = hash & hash;
+        }
+        return `${hash}`;
+    }
+    static generateId(screenName, activity, desktopName) {
+        let path = screenName;
+        if (KWINCONFIG.layoutPerActivity) path += "@" + activity;
+        if (KWINCONFIG.layoutPerDesktop) path += "#" + desktopName;
+        return KWinSurface.getHash(path);
+    }
+    constructor(output, activity, desktop, workspace) {
+        this.id = KWinSurface.generateId(output.name, activity, desktop.id);
+        this.ignore =
+            KWINCONFIG.ignoreActivity.indexOf(activity) >= 0 ||
+            KWINCONFIG.ignoreScreen.indexOf(output.name) >= 0 ||
+            KWINCONFIG.ignoreVDesktop.indexOf(desktop.name) >= 0;
+        this.workingArea = toRect(workspace.clientArea(0, output, desktop));
+        this.output = output;
+        this.activity = activity;
+        this.desktop = desktop;
+    }
+    getParams() {
+        return [this.output.name, this.activity, this.desktop.name];
+    }
+    next() {
+        return null;
+    }
+    toString() {
+        return (
+            "KWinSurface(" +
+            [this.output.name, this.activity, this.desktop.name].join(", ") +
+            ")"
+        );
+    }
+}
+
+class KWinWindow {
+    static generateID(w) {
+        return w.internalId.toString();
+    }
+    get fullScreen() {
+        return this.window.fullScreen;
+    }
+    get geometry() {
+        return toRect(this.window.frameGeometry);
+    }
+    get windowClassName() {
+        return this.window.resourceClass;
+    }
+    get shouldIgnore() {
+        if (this.window.deleted) return true;
+        return (
+            this.window.specialWindow ||
+            this.window.resourceClass === "plasmashell" ||
+            this.isIgnoredByConfig
+        );
+    }
+    get shouldFloat() {
+        return (
+            this.isFloatByConfig ||
+            (CONFIG.floatSkipPager && this.window.skipPager) ||
+            this.window.modal ||
+            this.window.transient ||
+            !this.window.resizeable ||
+            (KWINCONFIG.floatUtility &&
+                (this.window.dialog ||
+                    this.window.splash ||
+                    this.window.utility))
+        );
+    }
+    get minimized() {
+        return this.window.minimized;
+    }
+    get surface() {
+        let activity;
+        let desktop;
+        if (this.window.activities.length === 0)
+            activity = this.workspace.currentActivity;
+        else if (
+            this.window.activities.indexOf(this.workspace.currentActivity) >= 0
+        )
+            activity = this.workspace.currentActivity;
+        else activity = this.window.activities[0];
+        if (this.window.desktops.length === 1) {
+            desktop = this.window.desktops[0];
+        } else if (this.window.desktops.length === 0) {
+            desktop = this.workspace.currentDesktop;
+        } else {
+            if (
+                this.window.desktops.indexOf(this.workspace.currentDesktop) >= 0
+            )
+                desktop = this.workspace.currentDesktop;
+            else desktop = this.window.desktops[0];
+        }
+        return new KWinSurface(
+            this.window.output,
+            activity,
+            desktop,
+            this.workspace,
+        );
+    }
+    set surface(srf) {
+        const ksrf = srf;
+        if (this.window.desktops[0] !== ksrf.desktop)
+            this.window.desktops = [ksrf.desktop];
+        if (this.window.activities[0] !== ksrf.activity)
+            this.window.activities = [ksrf.activity];
+    }
+    get minSize() {
+        return {
+            width: this.window.minSize.width,
+            height: this.window.minSize.height,
+        };
+    }
+    get maxSize() {
+        return {
+            width: this.window.maxSize.width,
+            height: this.window.maxSize.height,
+        };
+    }
+    constructor(window, workspace) {
+        this.workspace = workspace;
+        this.window = window;
+        this.id = KWinWindow.generateID(window);
+        this.maximized = false;
+        this.noBorderManaged = false;
+        this.noBorderOriginal = window.noBorder;
+        this.isIgnoredByConfig =
+            KWinWindow.isContain(
+                KWINCONFIG.ignoreClass,
+                window.resourceClass,
+            ) ||
+            KWinWindow.isContain(KWINCONFIG.ignoreClass, window.resourceName) ||
+            matchWords(this.window.caption, KWINCONFIG.ignoreTitle) >= 0 ||
+            KWinWindow.isContain(KWINCONFIG.ignoreRole, window.windowRole) ||
+            (KWINCONFIG.tileNothing &&
+                KWinWindow.isContain(
+                    KWINCONFIG.tilingClass,
+                    window.resourceClass,
+                ));
+        this.isFloatByConfig =
+            KWinWindow.isContain(
+                KWINCONFIG.floatingClass,
+                window.resourceClass,
+            ) ||
+            KWinWindow.isContain(
+                KWINCONFIG.floatingClass,
+                window.resourceName,
+            ) ||
+            matchWords(this.window.caption, KWINCONFIG.floatingTitle) >= 0;
+    }
+    commit(geometry, noBorder, windowLayer) {
+        if (this.window.move || this.window.resize) return;
+        if (noBorder !== undefined) {
+            if (!this.noBorderManaged && noBorder)
+                this.noBorderOriginal = this.window.noBorder;
+            else if (this.noBorderManaged && !this.window.noBorder)
+                this.noBorderOriginal = false;
+            if (noBorder) this.window.noBorder = true;
+            else if (this.noBorderManaged)
+                this.window.noBorder = this.noBorderOriginal;
+            this.noBorderManaged = noBorder;
+        }
+        if (windowLayer !== undefined) {
+            if (windowLayer === 2) this.window.keepAbove = true;
+            else if (windowLayer === 0) this.window.keepBelow = true;
+            else if (windowLayer === 1) {
+                this.window.keepAbove = false;
+                this.window.keepBelow = false;
+            }
+        }
+        if (geometry !== undefined) {
+            geometry = this.adjustGeometry(geometry);
+            if (KWINCONFIG.preventProtrusion) {
+                const area = toRect(
+                    this.workspace.clientArea(
+                        0,
+                        this.window.output,
+                        this.workspace.currentDesktop,
+                    ),
+                );
+                if (!area.includes(geometry)) {
+                    const x =
+                        geometry.x + Math.min(area.maxX - geometry.maxX, 0);
+                    const y =
+                        geometry.y + Math.min(area.maxY - geometry.maxY, 0);
+                    geometry = new Rect(x, y, geometry.width, geometry.height);
+                    geometry = this.adjustGeometry(geometry);
+                }
+            }
+            if (this.window.deleted) return;
+            this.window.frameGeometry = toQRect(geometry);
+        }
+    }
+    toString() {
+        return (
+            "KWin(" +
+            this.window.internalId.toString() +
+            "." +
+            this.window.resourceClass +
+            ")"
+        );
+    }
+    visible(srf) {
+        const ksrf = srf;
+        return (
+            !this.window.deleted &&
+            !this.window.minimized &&
+            (this.window.onAllDesktops ||
+                this.window.desktops.indexOf(ksrf.desktop) !== -1) &&
+            (this.window.activities.length === 0 ||
+                this.window.activities.indexOf(ksrf.activity) !== -1) &&
+            this.window.output === ksrf.output
+        );
+    }
+    static isContain(filterList, s) {
+        for (let filterWord of filterList) {
+            if (
+                filterWord[0] === "[" &&
+                filterWord[filterWord.length - 1] === "]"
+            ) {
+                if (
+                    s
+                        .toLowerCase()
+                        .includes(
+                            filterWord
+                                .toLowerCase()
+                                .slice(1, filterWord.length - 1),
+                        )
+                )
+                    return true;
+            } else if (s.toLowerCase() === filterWord.toLowerCase())
+                return true;
+        }
+        return false;
+    }
+    adjustGeometry(geometry) {
+        let width = geometry.width;
+        let height = geometry.height;
+        if (!this.window.resizeable) {
+            width = this.window.width;
+            height = this.window.height;
+        } else {
+            width = clip(
+                width,
+                this.window.minSize.width,
+                this.window.maxSize.width,
+            );
+            height = clip(
+                height,
+                this.window.minSize.height,
+                this.window.maxSize.height,
+            );
+        }
+        return new Rect(geometry.x, geometry.y, width, height);
     }
 }
 
